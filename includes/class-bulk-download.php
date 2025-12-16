@@ -179,6 +179,9 @@ class Bulk_Download {
 			return;
 		}
 
+		// Ensure media-views is enqueued (needed for grid view).
+		wp_enqueue_script( 'media-views' );
+
 		// Inline script to add Download button to Grid view.
 		$script = "
 		jQuery(document).ready(function($) {
