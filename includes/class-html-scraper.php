@@ -68,7 +68,7 @@ class Html_Scraper {
 		$status_code = wp_remote_retrieve_response_code( $response );
 
 		// Check response status.
-		if ( $status_code !== 200 ) {
+		if ( 200 !== $status_code ) {
 			return new \WP_Error(
 				'http_error',
 				sprintf(
@@ -128,7 +128,7 @@ class Html_Scraper {
 
 		$img_elements = $xpath->query( $query );
 
-		if ( ! $img_elements || $img_elements->length === 0 ) {
+		if ( ! $img_elements || 0 === $img_elements->length ) {
 			return array();
 		}
 
@@ -189,7 +189,7 @@ class Html_Scraper {
 				'filename' => $filename,
 			);
 
-			$count++;
+			++$count;
 		}
 
 		return $images;
@@ -202,14 +202,14 @@ class Html_Scraper {
 	 * @return string Image URL.
 	 */
 	private function parse_srcset( $srcset ) {
-		$sources = explode( ',', $srcset );
-		$largest = '';
+		$sources   = explode( ',', $srcset );
+		$largest   = '';
 		$max_width = 0;
 
 		foreach ( $sources as $source ) {
 			$parts = preg_split( '/\s+/', trim( $source ) );
 			if ( ! empty( $parts[0] ) ) {
-				$url = $parts[0];
+				$url   = $parts[0];
 				$width = 0;
 
 				// Extract width if specified (e.g., "1200w").
@@ -219,7 +219,7 @@ class Html_Scraper {
 
 				if ( $width > $max_width ) {
 					$max_width = $width;
-					$largest = $url;
+					$largest   = $url;
 				} elseif ( empty( $largest ) ) {
 					$largest = $url;
 				}
@@ -295,7 +295,7 @@ class Html_Scraper {
 	private function generate_filename_from_url( $url ) {
 		$parsed = wp_parse_url( $url );
 		$path   = isset( $parsed['path'] ) ? $parsed['path'] : '';
-		
+
 		if ( empty( $path ) ) {
 			return 'image-' . time() . '.jpg';
 		}

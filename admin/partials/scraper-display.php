@@ -23,7 +23,7 @@ $api_key = isset( $options['firecrawl_api_key'] ) ? $options['firecrawl_api_key'
 	<div class="notice notice-info inline" style="margin: 10px 0; display: flex; align-items: center; justify-content: space-between;">
 		<p style="margin: 0;">
 			<strong><?php esc_html_e( 'Current Scraping Method:', 'better-media-manager' ); ?></strong>
-			<?php if ( $method === 'firecrawl' ) : ?>
+			<?php if ( 'firecrawl' === $method ) : ?>
 				<span class="dashicons dashicons-cloud" style="color: #2271b1;"></span>
 				<?php esc_html_e( 'Firecrawl API (Advanced)', 'better-media-manager' ); ?>
 			<?php else : ?>
@@ -37,7 +37,7 @@ $api_key = isset( $options['firecrawl_api_key'] ) ? $options['firecrawl_api_key'
 	</div>
 
 	<!-- API Key Warning for Firecrawl -->
-	<?php if ( $method === 'firecrawl' && empty( $api_key ) ) : ?>
+	<?php if ( 'firecrawl' === $method && empty( $api_key ) ) : ?>
 		<div class="notice notice-warning">
 			<p>
 				<?php
@@ -72,7 +72,7 @@ $api_key = isset( $options['firecrawl_api_key'] ) ? $options['firecrawl_api_key'
 								class="regular-text" 
 								placeholder="https://example.com"
 								required
-								<?php echo ( $method === 'firecrawl' && empty( $api_key ) ) ? 'disabled' : ''; ?>
+							<?php echo ( 'firecrawl' === $method && empty( $api_key ) ) ? 'disabled' : ''; ?>
 							/>
 							<p class="description">
 								<?php esc_html_e( 'Enter the URL of the webpage you want to scrape images from.', 'better-media-manager' ); ?>
@@ -89,7 +89,7 @@ $api_key = isset( $options['firecrawl_api_key'] ) ? $options['firecrawl_api_key'
 									type="checkbox" 
 									id="target_class_toggle" 
 									name="target_class_toggle"
-									<?php echo ( $method === 'firecrawl' && empty( $api_key ) ) ? 'disabled' : ''; ?>
+								<?php echo ( 'firecrawl' === $method && empty( $api_key ) ) ? 'disabled' : ''; ?>
 								/>
 								<?php esc_html_e( 'Only scrape images with a specific CSS class', 'better-media-manager' ); ?>
 							</label>
@@ -100,7 +100,7 @@ $api_key = isset( $options['firecrawl_api_key'] ) ? $options['firecrawl_api_key'
 									name="target_class" 
 									class="regular-text" 
 									placeholder="my-image-class or .my-image-class"
-									<?php echo ( $method === 'firecrawl' && empty( $api_key ) ) ? 'disabled' : ''; ?>
+								<?php echo ( 'firecrawl' === $method && empty( $api_key ) ) ? 'disabled' : ''; ?>
 								/>
 								<p class="description">
 									<?php esc_html_e( 'Enter the CSS class name (with or without the dot).', 'better-media-manager' ); ?>
@@ -110,15 +110,15 @@ $api_key = isset( $options['firecrawl_api_key'] ) ? $options['firecrawl_api_key'
 					</tr>
 				</table>
 
-				<?php 
-				$button_disabled = ( $method === 'firecrawl' && empty( $api_key ) );
-				submit_button( 
-					__( 'Start Scraping', 'better-media-manager' ), 
-					'primary', 
-					'submit', 
-					true, 
+				<?php
+				$button_disabled = ( 'firecrawl' === $method && empty( $api_key ) );
+				submit_button(
+					__( 'Start Scraping', 'better-media-manager' ),
+					'primary',
+					'submit',
+					true,
 					$button_disabled ? array( 'disabled' => 'disabled' ) : array()
-				); 
+				);
 				?>
 			</form>
 		</div>

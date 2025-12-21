@@ -1,0 +1,17 @@
+parameters:
+	level: 8
+	paths:
+		- admin
+		- includes
+		- better-media-manager.php
+	excludePaths:
+		- vendor
+	scanDirectories:
+		- ../../../
+	bootstrapFiles:
+		- phpstan-bootstrap.php
+	ignoreErrors:
+		# WordPress functions that PHPStan doesn't understand
+		- '#Function (wp_[a-z_]+|esc_[a-z_]+|sanitize_[a-z_]+|add_[a-z_]+|get_[a-z_]+) not found#'
+		# Allow dynamic property access for WordPress hooks
+		- '#Access to an undefined property#'

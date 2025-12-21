@@ -61,7 +61,7 @@ class Media_Filter {
 			<?php foreach ( $file_types as $extension => $data ) : ?>
 				<option value="<?php echo esc_attr( $extension ); ?>" <?php selected( $current_filetype, $extension ); ?>>
 					<?php
-					/* translators: 1: file extension (uppercase), 2: count of files */
+					/* translators: 1: file extension (uppercase), 2: count of files with that extension */
 					printf(
 						esc_html__( '%1$s (%2$d)', 'better-media-manager' ),
 						esc_html( strtoupper( $extension ) ),
@@ -146,7 +146,7 @@ class Media_Filter {
 	 * Add custom filter template for grid view.
 	 */
 	public function print_media_templates() {
-		// Allow template on any admin page that might use media modal
+		// Allow template on any admin page that might use media modal.
 		if ( ! is_admin() ) {
 			return;
 		}
@@ -159,7 +159,7 @@ class Media_Filter {
 				<?php foreach ( $file_types as $extension => $data ) : ?>
 					<option value="<?php echo esc_attr( $extension ); ?>">
 						<?php
-						/* translators: 1: file extension (uppercase), 2: count of files */
+						/* translators: 1: file extension (uppercase), 2: count of files with that extension */
 						printf(
 							esc_html__( '%1$s (%2$d)', 'better-media-manager' ),
 							esc_html( strtoupper( $extension ) ),
@@ -177,7 +177,7 @@ class Media_Filter {
 	 * Enqueue styles for media library page.
 	 */
 	public function enqueue_media_styles() {
-		// Allow styles on any admin page that might use media modal
+		// Allow styles on any admin page that might use media modal.
 		if ( ! is_admin() ) {
 			return;
 		}
@@ -195,12 +195,12 @@ class Media_Filter {
 	 * Enqueue scripts for grid view filter.
 	 */
 	public function enqueue_media_scripts() {
-		// Allow scripts on any admin page that might use media modal
+		// Allow scripts on any admin page that might use media modal.
 		if ( ! is_admin() ) {
 			return;
 		}
 
-		// Add inline script to media-views
+		// Add inline script to media-views.
 		$script = "
 		jQuery(document).ready(function($) {
 			console.log('BMM Media Filter: Script loaded');
@@ -285,6 +285,14 @@ if (filters === 'uploaded' || filters === 'all' || !filters) {
 	 * @return array Array of file types with counts.
 	 */
 	private function get_available_file_types() {
+		// Try to get cached results.
+		$cache_key  = 'bmm_file_types';
+		$file_types = get_transient( $cache_key );
+
+		if ( false !== $file_types ) {
+			return $file_types;
+		}
+
 		global $wpdb;
 
 		// Query to get all file extensions from attachments.
@@ -303,7 +311,7 @@ if (filters === 'uploaded' || filters === 'all' || !filters) {
 		if ( $results ) {
 			foreach ( $results as $row ) {
 				$extension = strtolower( sanitize_text_field( $row['extension'] ) );
-				
+
 				// Only include common image/media file types.
 				if ( in_array( $extension, array( 'jpg', 'jpeg', 'png', 'gif', 'webp', 'svg', 'bmp', 'ico', 'pdf', 'mp4', 'mov', 'avi', 'mp3', 'wav', 'zip', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx' ), true ) ) {
 					$file_types[ $extension ] = array(
@@ -312,6 +320,9 @@ if (filters === 'uploaded' || filters === 'all' || !filters) {
 				}
 			}
 		}
+
+		// Cache for 1 hour.
+		set_transient( $cache_key, $file_types, HOUR_IN_SECONDS );
 
 		return $file_types;
 	}

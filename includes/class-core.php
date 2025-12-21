@@ -54,15 +54,15 @@ class Core {
 	private function load_dependencies() {
 		require_once BETTER_MEDIA_MANAGER_PLUGIN_DIR . 'includes/class-loader.php';
 		require_once BETTER_MEDIA_MANAGER_PLUGIN_DIR . 'includes/class-i18n.php';
-		
+
 		// Image Scraper functionality.
 		require_once BETTER_MEDIA_MANAGER_PLUGIN_DIR . 'includes/class-firecrawl-api.php';
 		require_once BETTER_MEDIA_MANAGER_PLUGIN_DIR . 'includes/class-html-scraper.php';
 		require_once BETTER_MEDIA_MANAGER_PLUGIN_DIR . 'includes/class-media-importer.php';
-		
+
 		// Bulk Download functionality.
 		require_once BETTER_MEDIA_MANAGER_PLUGIN_DIR . 'includes/class-bulk-download.php';
-		
+
 		// Admin classes.
 		require_once BETTER_MEDIA_MANAGER_PLUGIN_DIR . 'admin/class-admin.php';
 		require_once BETTER_MEDIA_MANAGER_PLUGIN_DIR . 'admin/class-settings.php';

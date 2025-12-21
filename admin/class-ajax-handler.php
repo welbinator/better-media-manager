@@ -67,7 +67,7 @@ class Ajax_Handler {
 		$method  = isset( $options['scraping_method'] ) ? $options['scraping_method'] : 'simple';
 
 		// Create scraper instance based on selected method.
-		if ( $method === 'firecrawl' ) {
+		if ( 'firecrawl' === $method ) {
 			// Check if API key is configured.
 			$api_key = isset( $options['firecrawl_api_key'] ) ? $options['firecrawl_api_key'] : '';
 			if ( empty( $api_key ) ) {
@@ -75,7 +75,7 @@ class Ajax_Handler {
 					array( 'message' => __( 'Firecrawl API key not configured. Please configure it in settings or switch to Simple Mode.', 'better-media-manager' ) )
 				);
 			}
-			
+
 			// Initialize Firecrawl API.
 			$scraper = new \Better_Media_Manager\Firecrawl_Api();
 		} else {
@@ -121,7 +121,7 @@ class Ajax_Handler {
 		$method  = isset( $options['scraping_method'] ) ? $options['scraping_method'] : 'simple';
 
 		// Only validate if using Firecrawl.
-		if ( $method !== 'firecrawl' ) {
+		if ( 'firecrawl' !== $method ) {
 			wp_send_json_error(
 				array( 'message' => __( 'API validation is only available when using Firecrawl method.', 'better-media-manager' ) )
 			);
@@ -190,7 +190,7 @@ class Ajax_Handler {
 		foreach ( $images as $index => &$image ) {
 			if ( isset( $image['individual_settings'] ) && is_array( $image['individual_settings'] ) ) {
 				$individual = $image['individual_settings'];
-				
+
 				// Merge individual settings into the image - individual overrides global.
 				if ( ! empty( $individual['filename'] ) ) {
 					$image['custom_filename'] = sanitize_file_name( $individual['filename'] );
@@ -210,7 +210,7 @@ class Ajax_Handler {
 				if ( ! empty( $individual['max_size'] ) ) {
 					$image['custom_max_size'] = absint( $individual['max_size'] );
 				}
-				
+
 				// Clean up the individual_settings key.
 				unset( $image['individual_settings'] );
 			}

@@ -132,7 +132,7 @@ class Settings {
 
 		// Sanitize scraping method.
 		if ( isset( $input['scraping_method'] ) ) {
-			$method = sanitize_text_field( $input['scraping_method'] );
+			$method                       = sanitize_text_field( $input['scraping_method'] );
 			$sanitized['scraping_method'] = in_array( $method, array( 'simple', 'firecrawl' ), true ) ? $method : 'simple';
 		}
 
@@ -216,8 +216,8 @@ class Settings {
 	public function api_section_callback() {
 		$options = get_option( 'better_media_manager_settings' );
 		$method  = isset( $options['scraping_method'] ) ? $options['scraping_method'] : 'simple';
-		
-		if ( $method === 'simple' ) {
+
+		if ( 'simple' === $method ) {
 			echo '<p class="description">' . esc_html__( 'Firecrawl API is not required when using Simple Mode.', 'better-media-manager' ) . '</p>';
 		} else {
 			echo '<p>' . esc_html__( 'Configure your Firecrawl API credentials. Get your API key from', 'better-media-manager' ) . ' <a href="https://firecrawl.dev" target="_blank">firecrawl.dev</a>.</p>';

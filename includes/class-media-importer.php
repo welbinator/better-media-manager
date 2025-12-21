@@ -70,10 +70,10 @@ class Media_Importer {
 		foreach ( $images as $index => $image ) {
 			// Pass the index for sequential naming when prefix is used.
 			$image['import_index'] = $index;
-			$result = $this->import_single_image( $image );
-			
+			$result                = $this->import_single_image( $image );
+
 			if ( ! is_wp_error( $result ) ) {
-				$imported_count++;
+				++$imported_count;
 			} else {
 				$this->errors[] = sprintf(
 					/* translators: 1: filename, 2: error message */
@@ -176,14 +176,14 @@ class Media_Importer {
 		}
 
 		// Check for individual max_width setting, otherwise use global.
-		$max_width = isset( $image['custom_max_width'] ) && $image['custom_max_width'] > 0 
-			? $image['custom_max_width'] 
+		$max_width = isset( $image['custom_max_width'] ) && $image['custom_max_width'] > 0
+			? $image['custom_max_width']
 			: $this->options['max_width'];
 
 		// Resize if max_width is set.
 		if ( ! empty( $max_width ) && $max_width > 0 ) {
 			$size = $editor->get_size();
-			
+
 			if ( $size['width'] > $max_width ) {
 				$editor->resize( $max_width, null, false );
 			}
@@ -207,14 +207,14 @@ class Media_Importer {
 		$output_file = $saved['path'];
 
 		// Check for individual max_size setting, otherwise use global.
-		$max_filesize = isset( $image['custom_max_size'] ) && $image['custom_max_size'] > 0 
-			? $image['custom_max_size'] 
+		$max_filesize = isset( $image['custom_max_size'] ) && $image['custom_max_size'] > 0
+			? $image['custom_max_size']
 			: $this->options['max_filesize'];
 
 		// Compress to max filesize if needed.
 		if ( ! empty( $max_filesize ) && $max_filesize > 0 ) {
 			$output_file = $this->compress_to_filesize( $output_file, $max_filesize, $output_format );
-			
+
 			if ( is_wp_error( $output_file ) ) {
 				@unlink( $temp_output );
 				return $output_file;
@@ -248,14 +248,14 @@ class Media_Importer {
 		}
 
 		// Try reducing quality iteratively.
-		$quality     = 85;
-		$min_quality = 40;
-		$attempts    = 0;
+		$quality      = 85;
+		$min_quality  = 40;
+		$attempts     = 0;
 		$max_attempts = 10;
 
 		while ( $current_size > $max_size_bytes && $quality >= $min_quality && $attempts < $max_attempts ) {
 			$editor->set_quality( $quality );
-			
+
 			$temp_file = wp_tempnam();
 			$saved     = $editor->save( $temp_file, $output_format );
 
@@ -276,9 +276,9 @@ class Media_Importer {
 			$current_size = $new_size;
 			@unlink( $file_path );
 			$file_path = $saved['path'];
-			
+
 			$quality -= 5;
-			$attempts++;
+			++$attempts;
 		}
 
 		// If we couldn't get it small enough, return the best we got.
@@ -342,19 +342,19 @@ class Media_Importer {
 		if ( isset( $image['custom_filename'] ) && ! empty( $image['custom_filename'] ) ) {
 			// Use custom filename - determine extension.
 			$extension = 'jpg';
-			
+
 			// Check for individual format setting.
 			if ( isset( $image['custom_format'] ) && ! empty( $image['custom_format'] ) ) {
 				$extension = $image['custom_format'];
 			} elseif ( ! empty( $this->options['convert_format'] ) ) {
 				$extension = $this->options['convert_format'];
 			} elseif ( isset( $image['filename'] ) ) {
-				$pathinfo = pathinfo( $image['filename'] );
+				$pathinfo  = pathinfo( $image['filename'] );
 				$extension = isset( $pathinfo['extension'] ) ? $pathinfo['extension'] : 'jpg';
 			}
-			
+
 			// Ensure custom filename has correct extension.
-			$custom = $image['custom_filename'];
+			$custom   = $image['custom_filename'];
 			$pathinfo = pathinfo( $custom );
 			if ( isset( $pathinfo['extension'] ) ) {
 				// Has extension, replace it.
@@ -363,15 +363,15 @@ class Media_Importer {
 				// No extension, add it.
 				$custom = $custom . '.' . $extension;
 			}
-			
+
 			return sanitize_file_name( $custom );
 		}
 
 		$has_prefix = ! empty( $this->options['filename_prefix'] );
-		
+
 		// Determine file extension.
 		$extension = 'jpg';
-		
+
 		// Check for individual format, then global.
 		if ( isset( $image['custom_format'] ) && ! empty( $image['custom_format'] ) ) {
 			$extension = $image['custom_format'];
@@ -380,19 +380,19 @@ class Media_Importer {
 			$extension = $this->options['convert_format'];
 		} elseif ( isset( $image['filename'] ) ) {
 			// Extract extension from original filename.
-			$pathinfo = pathinfo( $image['filename'] );
+			$pathinfo  = pathinfo( $image['filename'] );
 			$extension = isset( $pathinfo['extension'] ) ? $pathinfo['extension'] : 'jpg';
 		}
 
 		// If prefix is set, use sequential naming.
 		if ( $has_prefix ) {
 			$prefix = sanitize_file_name( $this->options['filename_prefix'] );
-			$index = isset( $image['import_index'] ) ? $image['import_index'] : 0;
-			
-			// First image: [prefix].ext
-			// Second image: [prefix]_1.ext
-			// Third image: [prefix]_2.ext
-			if ( $index === 0 ) {
+			$index  = isset( $image['import_index'] ) ? $image['import_index'] : 0;
+
+			// First image: [prefix].ext.
+			// Second image: [prefix]_1.ext.
+			// Third image: [prefix]_2.ext.
+			if ( 0 === $index ) {
 				$filename = $prefix . '.' . $extension;
 			} else {
 				$filename = $prefix . '_' . $index . '.' . $extension;
@@ -400,7 +400,7 @@ class Media_Importer {
 		} else {
 			// No prefix - use original filename or generate one.
 			$filename = isset( $image['filename'] ) ? $image['filename'] : 'image-' . time() . '.jpg';
-			
+
 			// Update extension if format was converted.
 			if ( ! empty( $this->options['convert_format'] ) ) {
 				$pathinfo = pathinfo( $filename );
@@ -459,11 +459,11 @@ class Media_Importer {
 	 * @return string|WP_Error Path to downloaded file or WP_Error on failure.
 	 */
 	private function download_with_retry( $url, $max_retries = 3 ) {
-		$attempt = 0;
+		$attempt    = 0;
 		$last_error = null;
 
 		while ( $attempt < $max_retries ) {
-			$attempt++;
+			++$attempt;
 
 			// Download image to temp file with longer timeout.
 			$temp_file = download_url( $url, 60 );

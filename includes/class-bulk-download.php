@@ -58,12 +58,12 @@ class Bulk_Download {
 	 */
 	public function handle_bulk_download( $redirect_to, $action, $post_ids ) {
 		// Only process if this is our action (List view) or bulk_download (Grid view).
-		if ( $action !== 'download' && $action !== 'bulk_download' ) {
+		if ( 'download' !== $action && 'bulk_download' !== $action ) {
 			return $redirect_to;
 		}
 
 		// For Grid view, get IDs from $_POST['media'] instead.
-		if ( $action === 'bulk_download' && ! empty( $_POST['media'] ) ) {
+		if ( 'bulk_download' === $action && ! empty( $_POST['media'] ) ) {
 			$post_ids = array_map( 'intval', $_POST['media'] );
 		}
 
@@ -106,7 +106,7 @@ class Bulk_Download {
 
 			// Skip if file doesn't exist.
 			if ( ! $file_path || ! file_exists( $file_path ) ) {
-				$skipped_count++;
+				++$skipped_count;
 				continue;
 			}
 
@@ -115,9 +115,9 @@ class Bulk_Download {
 
 			// Add file to ZIP.
 			if ( $zip->addFile( $file_path, $filename ) ) {
-				$added_count++;
+				++$added_count;
 			} else {
-				$skipped_count++;
+				++$skipped_count;
 			}
 		}
 
@@ -125,7 +125,7 @@ class Bulk_Download {
 		$zip->close();
 
 		// If no files were added, delete the ZIP and show error.
-		if ( $added_count === 0 ) {
+		if ( 0 === $added_count ) {
 			unlink( $zip_path );
 			$redirect_to = add_query_arg( 'bmm_error', 'no_files_added', $redirect_to );
 			return $redirect_to;
@@ -153,7 +153,7 @@ class Bulk_Download {
 	 */
 	public function handle_grid_download() {
 		// Check if this is a grid view download request.
-		if ( empty( $_POST['action'] ) || $_POST['action'] !== 'bulk_download' ) {
+		if ( empty( $_POST['action'] ) || 'bulk_download' !== $_POST['action'] ) {
 			return;
 		}
 
@@ -175,7 +175,7 @@ class Bulk_Download {
 	 */
 	public function enqueue_grid_scripts( $hook ) {
 		// Only load on media library page.
-		if ( $hook !== 'upload.php' ) {
+		if ( 'upload.php' !== $hook ) {
 			return;
 		}
 
