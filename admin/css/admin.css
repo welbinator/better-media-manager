@@ -272,3 +272,19 @@
 		height: 100px;
 	}
 }
+
+/* Media Library Filter Styles */
+.media-toolbar .bmm-filetype-filter-wrapper {
+	display: inline-block;
+}
+
+.media-toolbar #bmm-filetype-filter {
+	vertical-align: middle;
+}
+
+/* Grid view toolbar inline fix */
+.attachments-browser .media-toolbar-secondary > .attachment-filters {
+	display: inline-block;
+	margin-right: 10px;
+	vertical-align: middle;
+}
