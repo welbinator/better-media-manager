@@ -280,11 +280,42 @@
 
 .media-toolbar #bmm-filetype-filter {
 	vertical-align: middle;
+	display: inline-block;
 }
 
-/* Grid view toolbar inline fix */
-.attachments-browser .media-toolbar-secondary > .attachment-filters {
+/* Ensure label is inline and hidden */
+.media-toolbar label[for="bmm-filetype-filter"] {
+	display: inline-block;
+}
+
+/* Grid view toolbar inline fix - both standalone and modal */
+.attachments-browser .media-toolbar-secondary > .attachment-filters,
+.attachments-browser .media-toolbar-secondary > select.attachment-filters,
+.attachments-browser .media-toolbar-secondary > label + select.attachment-filters {
 	display: inline-block;
 	margin-right: 10px;
 	vertical-align: middle;
+}
+
+/* Ensure labels don't break layout */
+.media-toolbar-secondary label.screen-reader-text + select.attachment-filters {
+	display: inline-block;
+}
+
+/* Override WordPress default width for attachment filters in media modal */
+.media-modal-content .media-frame select.attachment-filters {
+	width: auto !important;
+}
+
+/* Responsive adjustments for media toolbar with extra filter */
+@media only screen and (max-width: 900px) {
+	.attachments-browser .attachments, .attachments-browser .uploader-inline, .media-frame-content .attachments-browser .attachments-wrapper {
+		top: 160px;
+	}
+}
+
+@media only screen and (max-width: 900px) {
+	.attachments-browser .media-toolbar {
+		height: 160px;
+	}
 }

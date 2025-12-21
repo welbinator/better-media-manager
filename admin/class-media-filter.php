@@ -146,10 +146,8 @@ class Media_Filter {
 	 * Add custom filter template for grid view.
 	 */
 	public function print_media_templates() {
-		$screen = get_current_screen();
-		
-		// Only output on media library page.
-		if ( ! $screen || 'upload' !== $screen->id ) {
+		// Allow template on any admin page that might use media modal
+		if ( ! is_admin() ) {
 			return;
 		}
 
@@ -179,10 +177,8 @@ class Media_Filter {
 	 * Enqueue styles for media library page.
 	 */
 	public function enqueue_media_styles() {
-		$screen = get_current_screen();
-
-		// Only load on media library page.
-		if ( ! $screen || 'upload' !== $screen->id ) {
+		// Allow styles on any admin page that might use media modal
+		if ( ! is_admin() ) {
 			return;
 		}
 
@@ -199,10 +195,8 @@ class Media_Filter {
 	 * Enqueue scripts for grid view filter.
 	 */
 	public function enqueue_media_scripts() {
-		$screen = get_current_screen();
-
-		// Only load on media library page.
-		if ( ! $screen || 'upload' !== $screen->id ) {
+		// Allow scripts on any admin page that might use media modal
+		if ( ! is_admin() ) {
 			return;
 		}
 
@@ -242,15 +236,27 @@ if (filters === 'uploaded' || filters === 'all' || !filters) {
 							var self = this;
 							setTimeout(function() {
 								var \$toolbar = self.toolbar.\$el.find('.media-toolbar-secondary');
+								console.log('BMM Media Filter: toolbar found =', \$toolbar.length);
+								
 								var \$dateFilter = \$toolbar.find('#media-attachment-date-filters');
+								console.log('BMM Media Filter: date filter found =', \$dateFilter.length);
+								
+								// Check if our filter already exists
+								if ($('#bmm-filetype-filter').length > 0) {
+									console.log('BMM Media Filter: Filter already exists, skipping');
+									return;
+								}
 								
 								if (\$dateFilter.length) {
 									\$dateFilter.after(template);
+									console.log('BMM Media Filter: Inserted after date filter');
 								} else {
 									\$toolbar.append(template);
+									console.log('BMM Media Filter: Appended to toolbar');
 								}
 								
-								console.log('BMM Media Filter: Filter added to toolbar');
+								console.log('BMM Media Filter: Filter HTML added');
+								console.log('BMM Media Filter: Filter exists now?', $('#bmm-filetype-filter').length);
 								
 								// Bind change event
 								$('#bmm-filetype-filter').on('change', function() {
