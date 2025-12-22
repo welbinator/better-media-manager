@@ -19,7 +19,14 @@ A comprehensive WordPress media management solution that combines powerful image
 - **Smart Naming**: Files are prefixed with attachment IDs to prevent conflicts
 - **Automatic Cleanup**: Temporary ZIP files are automatically removed after download
 
-### 🔒 Security & Best Practices
+### �️ File Type Filtering
+- **Smart Filter Dropdown**: Filter media library by file extension (JPG, PNG, WebP, PDF, etc.)
+- **Real-Time Counts**: Shows number of files for each type
+- **Universal Support**: Works in both List and Grid views, including media modal popups
+- **Auto-Detection**: Automatically discovers file types in your media library
+- **Cached Performance**: Intelligent caching with automatic refresh on upload/delete
+
+### �🔒 Security & Best Practices
 - WordPress security standards (nonces, sanitization, escaping)
 - Clean object-oriented architecture
 - Proper namespacing and autoloading
@@ -40,6 +47,14 @@ A comprehensive WordPress media management solution that combines powerful image
 2. Select the files you want to download
 3. Choose **Download** from the bulk actions dropdown
 4. Click **Apply** - your ZIP file will download automatically
+
+### File Type Filtering
+
+1. Go to **Media Library** (List, Grid, or media modal in post editor)
+2. Find the **File Type** dropdown in the toolbar
+3. Select a file extension to filter (e.g., "PNG (45)" shows only PNG files)
+4. Filter instantly updates - select "All file types" to show everything
+5. Counts update automatically when you upload or delete files
 
 ### Image Scraper
 
@@ -113,6 +128,7 @@ better-media-manager/
 │   ├── class-admin.php            # Admin menu and pages
 │   ├── class-settings.php         # Settings API integration
 │   ├── class-ajax-handler.php     # AJAX request handlers
+│   ├── class-media-filter.php     # File type filtering
 │   ├── css/
 │   │   └── admin.css              # Admin styles
 │   ├── js/
@@ -151,7 +167,22 @@ A: The bulk download has no hard limit, but very large ZIP files may be limited 
 **Q: Will this plugin slow down my site?**  
 A: No. All functionality is admin-only and doesn't affect your site's frontend performance.
 
+**Q: What file types can I filter by?**  
+A: The filter automatically detects file extensions in your media library, supporting common formats like JPG, PNG, WebP, GIF, SVG, PDF, MP4, and many more (20+ types).
+
+**Q: Does the filter work in the post/page editor's "Add Media" modal?**  
+A: Yes! The file type filter works everywhere - List view, Grid view, and all media modal popups throughout WordPress.
+
 ## Changelog
+
+### 1.1.0 - 2025-12-22
+- Added file type filtering to media library
+- Filter by file extension in List view, Grid view, and media modals
+- Shows file counts for each type (e.g., "PNG (45)")
+- Automatic cache invalidation on upload/delete
+- Performance optimizations with transient caching
+- Fixed 26 WordPress coding standards violations (Yoda conditions)
+- Improved translator comments for i18n compliance
 
 ### 1.0.0 - 2025-12-15
 - Initial release combining Image Scraper and Bulk Image Download

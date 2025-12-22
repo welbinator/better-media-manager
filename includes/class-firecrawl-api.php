@@ -37,9 +37,9 @@ class Firecrawl_Api {
 	 * Constructor.
 	 */
 	public function __construct() {
-		$settings       = get_option( 'better_media_manager_settings', array() );
-		$this->api_key  = isset( $settings['firecrawl_api_key'] ) ? $settings['firecrawl_api_key'] : '';
-		$this->timeout  = isset( $settings['timeout'] ) ? absint( $settings['timeout'] ) : 30;
+		$settings      = get_option( 'better_media_manager_settings', array() );
+		$this->api_key = isset( $settings['firecrawl_api_key'] ) ? $settings['firecrawl_api_key'] : '';
+		$this->timeout = isset( $settings['timeout'] ) ? absint( $settings['timeout'] ) : 30;
 	}
 
 	/**
@@ -85,7 +85,7 @@ class Firecrawl_Api {
 
 		// 401 = invalid API key, 405 = valid key but wrong method (expected for GET on /scrape).
 		// 200 would also indicate valid key.
-		if ( $status_code === 401 || $status_code === 403 ) {
+		if ( 401 === $status_code || 403 === $status_code ) {
 			return new \WP_Error( 'invalid_api_key', __( 'API key is invalid or unauthorized.', 'better-media-manager' ) );
 		}
 
@@ -146,7 +146,7 @@ class Firecrawl_Api {
 		$data        = json_decode( $body, true );
 
 		// Check response status.
-		if ( $status_code !== 200 ) {
+		if ( 200 !== $status_code ) {
 			$error_message = isset( $data['error'] ) ? $data['error'] : __( 'Unknown API error', 'better-media-manager' );
 			return new \WP_Error( 'api_error', $error_message );
 		}
@@ -199,7 +199,7 @@ class Firecrawl_Api {
 
 		$img_elements = $xpath->query( $query );
 
-		if ( ! $img_elements || $img_elements->length === 0 ) {
+		if ( ! $img_elements || 0 === $img_elements->length ) {
 			return array();
 		}
 
@@ -243,7 +243,7 @@ class Firecrawl_Api {
 				'filename' => $filename,
 			);
 
-			$count++;
+			++$count;
 		}
 
 		return $images;
@@ -289,7 +289,7 @@ class Firecrawl_Api {
 	private function generate_filename_from_url( $url ) {
 		$parsed = wp_parse_url( $url );
 		$path   = isset( $parsed['path'] ) ? $parsed['path'] : '';
-		
+
 		if ( empty( $path ) ) {
 			return 'image-' . time() . '.jpg';
 		}

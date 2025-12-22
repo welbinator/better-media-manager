@@ -54,19 +54,20 @@ class Core {
 	private function load_dependencies() {
 		require_once BETTER_MEDIA_MANAGER_PLUGIN_DIR . 'includes/class-loader.php';
 		require_once BETTER_MEDIA_MANAGER_PLUGIN_DIR . 'includes/class-i18n.php';
-		
+
 		// Image Scraper functionality.
 		require_once BETTER_MEDIA_MANAGER_PLUGIN_DIR . 'includes/class-firecrawl-api.php';
 		require_once BETTER_MEDIA_MANAGER_PLUGIN_DIR . 'includes/class-html-scraper.php';
 		require_once BETTER_MEDIA_MANAGER_PLUGIN_DIR . 'includes/class-media-importer.php';
-		
+
 		// Bulk Download functionality.
 		require_once BETTER_MEDIA_MANAGER_PLUGIN_DIR . 'includes/class-bulk-download.php';
-		
+
 		// Admin classes.
 		require_once BETTER_MEDIA_MANAGER_PLUGIN_DIR . 'admin/class-admin.php';
 		require_once BETTER_MEDIA_MANAGER_PLUGIN_DIR . 'admin/class-settings.php';
 		require_once BETTER_MEDIA_MANAGER_PLUGIN_DIR . 'admin/class-ajax-handler.php';
+		require_once BETTER_MEDIA_MANAGER_PLUGIN_DIR . 'admin/class-media-filter.php';
 
 		$this->loader = new Loader();
 	}
@@ -106,6 +107,20 @@ class Core {
 		$this->loader->add_action( 'admin_init', $bulk_download, 'handle_grid_download' );
 		$this->loader->add_action( 'admin_notices', $bulk_download, 'admin_notices' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $bulk_download, 'enqueue_grid_scripts' );
+
+		// Media Library Filtering.
+		$media_filter = new Admin\Media_Filter( $this->get_plugin_name(), $this->get_version() );
+		// List view filters.
+		$this->loader->add_action( 'restrict_manage_posts', $media_filter, 'add_filetype_filter' );
+		$this->loader->add_action( 'pre_get_posts', $media_filter, 'filter_media_by_filetype' );
+		// Grid view filters.
+		$this->loader->add_filter( 'ajax_query_attachments_args', $media_filter, 'filter_ajax_query_attachments' );
+		$this->loader->add_action( 'print_media_templates', $media_filter, 'print_media_templates' );
+		$this->loader->add_action( 'admin_enqueue_scripts', $media_filter, 'enqueue_media_styles' );
+		$this->loader->add_action( 'admin_enqueue_scripts', $media_filter, 'enqueue_media_scripts' );
+		// Clear cache when attachments are added/deleted.
+		$this->loader->add_action( 'add_attachment', $media_filter, 'clear_file_types_cache' );
+		$this->loader->add_action( 'delete_attachment', $media_filter, 'clear_file_types_cache' );
 	}
 
 	/**
