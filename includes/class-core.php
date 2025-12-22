@@ -118,6 +118,9 @@ class Core {
 		$this->loader->add_action( 'print_media_templates', $media_filter, 'print_media_templates' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $media_filter, 'enqueue_media_styles' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $media_filter, 'enqueue_media_scripts' );
+		// Clear cache when attachments are added/deleted.
+		$this->loader->add_action( 'add_attachment', $media_filter, 'clear_file_types_cache' );
+		$this->loader->add_action( 'delete_attachment', $media_filter, 'clear_file_types_cache' );
 	}
 
 	/**

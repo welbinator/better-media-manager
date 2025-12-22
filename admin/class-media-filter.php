@@ -326,4 +326,13 @@ if (filters === 'uploaded' || filters === 'all' || !filters) {
 
 		return $file_types;
 	}
+
+	/**
+	 * Clear cached file types when attachments are added/deleted.
+	 *
+	 * @return void
+	 */
+	public function clear_file_types_cache() {
+		delete_transient( 'bmm_file_types' );
+	}
 }
