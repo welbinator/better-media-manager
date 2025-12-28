@@ -103,3 +103,48 @@ function run_better_media_manager() {
 }
 
 run_better_media_manager();
+
+
+
+function bmm_cleanup_all_categories() {
+    // Get all terms in the taxonomy
+    $terms = get_terms( array(
+        'taxonomy'   => 'bmm_media_category',
+        'hide_empty' => false,
+        'fields'     => 'ids',
+    ) );
+    
+    if ( ! is_wp_error( $terms ) && ! empty( $terms ) ) {
+        // Get all attachments
+        $attachments = get_posts( array(
+            'post_type'      => 'attachment',
+            'posts_per_page' => -1,
+            'fields'         => 'ids',
+        ) );
+        
+        // Remove all terms from all attachments
+        foreach ( $attachments as $attachment_id ) {
+            wp_set_object_terms( $attachment_id, array(), 'bmm_media_category' );
+            clean_object_term_cache( $attachment_id, 'attachment' );
+        }
+        
+        // Delete all terms
+        foreach ( $terms as $term_id ) {
+            wp_delete_term( $term_id, 'bmm_media_category' );
+        }
+        
+        // Clear all caches
+        delete_option( 'bmm_media_category_children' );
+        clean_taxonomy_cache( 'bmm_media_category' );
+    }
+    
+    echo 'All categories and associations cleaned up!';
+}
+
+// Run once on any admin page load
+add_action( 'admin_init', function() {
+    if ( isset( $_GET['bmm_cleanup'] ) ) {
+        bmm_cleanup_all_categories();
+        wp_die( 'Cleanup complete! Remove this code from functions.php now.' );
+    }
+});
