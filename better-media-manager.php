@@ -3,7 +3,7 @@
  * Plugin Name:       Better Media Manager
  * Plugin URI:        https://github.com/welbinator/better-media-manager
  * Description:       Complete media management solution: scrape images from websites, bulk download media files, and import directly to your WordPress media library with advanced processing options.
- * Version:           1.1.0
+ * Version:           1.2.0
  * Requires at least: 5.8
  * Requires PHP:      7.4
  * Author:            James Welbes
@@ -26,7 +26,7 @@ if ( ! defined( 'WPINC' ) ) {
 /**
  * Plugin version.
  */
-define( 'BETTER_MEDIA_MANAGER_VERSION', '1.1.0' );
+define( 'BETTER_MEDIA_MANAGER_VERSION', '1.2.0' );
 
 /**
  * Plugin directory path.
