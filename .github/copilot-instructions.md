@@ -23,6 +23,66 @@ admin/             # Admin UI (menu, AJAX handlers, settings)
   js/             # Admin JavaScript (AJAX interactions)
 ```
 
+## Code Quality Standards
+
+**All code must pass PHPStan and PHPCS checks** for PHP and WordPress coding standards. The project is configured with:
+- **PHPStan**: Static analysis tool with WordPress-specific rules (configuration in `phpstan.neon`)
+- **PHPCS**: PHP_CodeSniffer with WordPress Coding Standards (configuration in `phpcs.xml`)
+
+### Key Requirements:
+
+1. **Type Hints**: Use strict type declarations where possible
+   - Add `@param`, `@return`, and `@var` DocBlocks for all methods
+   - Use native PHP type hints for parameters and return types
+   - Document mixed types or union types in DocBlocks
+
+2. **WordPress Coding Standards**: Follow WordPress-Extra rules
+   - Use tabs (not spaces) for indentation
+   - Space after control structures: `if ( condition ) {`
+   - Yoda conditions for comparisons: `if ( 'value' === $variable )`
+   - Single quotes for strings unless interpolation needed
+
+3. **PHPStan Level**: Configured for strict analysis
+   - No unused variables or parameters
+   - Proper return type declarations
+   - Null-safe operations where needed
+   - Array key existence checks before access
+
+4. **Run Checks Before Committing**:
+   ```bash
+   # Check coding standards
+   vendor/bin/phpcs
+   
+   # Fix auto-fixable issues
+   vendor/bin/phpcbf
+   
+   # Run static analysis
+   vendor/bin/phpstan analyse
+   ```
+
+5. **Common Patterns for Compliance**:
+   ```php
+   // Always escape output
+   echo esc_html( $variable );
+   
+   // Proper nonce verification
+   if ( ! isset( $_POST['nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['nonce'] ) ), 'action_name' ) ) {
+       return;
+   }
+   
+   // Type-hinted methods with DocBlocks
+   /**
+    * Process media file.
+    *
+    * @param string $file_path Path to the file.
+    * @param array  $options   Processing options.
+    * @return int|\WP_Error Attachment ID or error.
+    */
+   public function process_file( string $file_path, array $options ) {
+       // Implementation
+   }
+   ```
+
 ## Critical Patterns
 
 ### 1. Class Naming & File Locations
