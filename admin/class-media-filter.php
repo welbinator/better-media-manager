@@ -239,7 +239,7 @@ class Media_Filter {
 				$query['tax_query'] = array();
 			}
 
-			// Don't use 'relation' if there's only one condition
+			// Don't use 'relation' if there's only one condition.
 			$query['tax_query'][] = array(
 				'taxonomy' => 'bmm_media_category',
 				'field'    => 'term_id',

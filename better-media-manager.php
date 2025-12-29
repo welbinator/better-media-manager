@@ -106,8 +106,15 @@ run_better_media_manager();
 
 
 
+/**
+ * Clean up all categories and their associations.
+ *
+ * Debug function to remove all terms and associations from the media category taxonomy.
+ *
+ * @return void
+ */
 function bmm_cleanup_all_categories() {
-	// Get all terms in the taxonomy
+	// Get all terms in the taxonomy..
 	$terms = get_terms(
 		array(
 			'taxonomy'   => 'bmm_media_category',
@@ -117,7 +124,7 @@ function bmm_cleanup_all_categories() {
 	);
 
 	if ( ! is_wp_error( $terms ) && ! empty( $terms ) ) {
-		// Get all attachments
+		// Get all attachments.
 		$attachments = get_posts(
 			array(
 				'post_type'      => 'attachment',
@@ -126,18 +133,18 @@ function bmm_cleanup_all_categories() {
 			)
 		);
 
-		// Remove all terms from all attachments
+		// Remove all terms from all attachments.
 		foreach ( $attachments as $attachment_id ) {
 			wp_set_object_terms( $attachment_id, array(), 'bmm_media_category' );
 			clean_object_term_cache( $attachment_id, 'attachment' );
 		}
 
-		// Delete all terms
+		// Delete all terms.
 		foreach ( $terms as $term_id ) {
 			wp_delete_term( $term_id, 'bmm_media_category' );
 		}
 
-		// Clear all caches
+		// Clear all caches.
 		delete_option( 'bmm_media_category_children' );
 		clean_taxonomy_cache( 'bmm_media_category' );
 	}
@@ -145,7 +152,7 @@ function bmm_cleanup_all_categories() {
 	echo 'All categories and associations cleaned up!';
 }
 
-// Run once on any admin page load
+// Run once on any admin page load.
 add_action(
 	'admin_init',
 	function () {
