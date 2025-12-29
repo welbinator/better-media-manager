@@ -25,7 +25,13 @@ A comprehensive WordPress media management solution that combines powerful image
 - **Universal Support**: Works in both List and Grid views, including media modal popups
 - **Auto-Detection**: Automatically discovers file types in your media library
 - **Cached Performance**: Intelligent caching with automatic refresh on upload/delete
-
+### 🏷️ Category Management
+- **Custom Taxonomy**: Organize media files with custom categories
+- **Multi-Select Interface**: Add multiple categories to any media file using Select2
+- **Create On-The-Fly**: Create new categories directly from the attachment editor
+- **Smart Filtering**: Filter media library by category in List and Grid views
+- **Accurate Counts**: Real-time category counts that understand attachment post status
+- **Instant Save**: Categories save automatically when changed
 ### �🔒 Security & Best Practices
 - WordPress security standards (nonces, sanitization, escaping)
 - Clean object-oriented architecture
@@ -55,6 +61,15 @@ A comprehensive WordPress media management solution that combines powerful image
 3. Select a file extension to filter (e.g., "PNG (45)" shows only PNG files)
 4. Filter instantly updates - select "All file types" to show everything
 5. Counts update automatically when you upload or delete files
+
+### Category Management
+
+1. Open any attachment in the **Media Library** (click to edit or use the attachment details modal)
+2. Find the **Category** field with a multi-select dropdown
+3. Select existing categories or type to create new ones (press Enter/comma to add)
+4. Categories save automatically when changed
+5. Use the **Category** dropdown in the media library toolbar to filter by category
+6. Category counts show the number of attachments in each category
 
 ### Image Scraper
 
@@ -123,6 +138,7 @@ better-media-manager/
 │   ├── class-firecrawl-api.php    # Firecrawl API integration
 │   ├── class-html-scraper.php     # Simple Mode HTML scraper
 │   ├── class-media-importer.php   # Image processing & import
+│   ├── class-media-taxonomy.php   # Category taxonomy management
 │   └── class-bulk-download.php    # Bulk download functionality
 ├── admin/                          # Admin-specific functionality
 │   ├── class-admin.php            # Admin menu and pages
@@ -173,7 +189,22 @@ A: The filter automatically detects file extensions in your media library, suppo
 **Q: Does the filter work in the post/page editor's "Add Media" modal?**  
 A: Yes! The file type filter works everywhere - List view, Grid view, and all media modal popups throughout WordPress.
 
+**Q: Can I add categories to multiple attachments at once?**  
+A: Currently, categories must be added individually to each attachment. Future versions may include bulk category assignment.
+
+**Q: Are categories searchable?**  
+A: Yes! Categories use WordPress's standard taxonomy system, so they're searchable and can be queried using standard WordPress functions.
+
 ## Changelog
+
+### 1.2.0 - 2025-12-28
+- Added custom category taxonomy for media files (bmm_media_category)
+- Multi-select category interface with Select2 integration
+- Create new categories on-the-fly from attachment editor
+- Category filtering in List and Grid views
+- Automatic category saving with AJAX
+- Custom term count callback for accurate attachment counts
+- Category filter works alongside file type filter
 
 ### 1.1.0 - 2025-12-22
 - Added file type filtering to media library

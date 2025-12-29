@@ -34,10 +34,7 @@
 	<rule ref="PHPCompatibilityWP"/>
 
 	<!-- WordPress-Extra rules -->
-	<rule ref="WordPress-Extra">
-		<!-- Allow short ternary -->
-		<exclude name="WordPress.PHP.DisallowShortTernary"/>
-	</rule>
+	<rule ref="WordPress-Extra"/>
 
 	<!-- WordPress-Docs rules -->
 	<rule ref="WordPress-Docs"/>

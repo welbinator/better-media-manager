@@ -3,7 +3,7 @@
  * Plugin Name:       Better Media Manager
  * Plugin URI:        https://github.com/welbinator/better-media-manager
  * Description:       Complete media management solution: scrape images from websites, bulk download media files, and import directly to your WordPress media library with advanced processing options.
- * Version:           1.1.0
+ * Version:           1.2.0
  * Requires at least: 5.8
  * Requires PHP:      7.4
  * Author:            James Welbes
@@ -26,7 +26,7 @@ if ( ! defined( 'WPINC' ) ) {
 /**
  * Plugin version.
  */
-define( 'BETTER_MEDIA_MANAGER_VERSION', '1.1.0' );
+define( 'BETTER_MEDIA_MANAGER_VERSION', '1.2.0' );
 
 /**
  * Plugin directory path.
@@ -103,3 +103,62 @@ function run_better_media_manager() {
 }
 
 run_better_media_manager();
+
+
+
+/**
+ * Clean up all categories and their associations.
+ *
+ * Debug function to remove all terms and associations from the media category taxonomy.
+ *
+ * @return void
+ */
+function bmm_cleanup_all_categories() {
+	// Get all terms in the taxonomy..
+	$terms = get_terms(
+		array(
+			'taxonomy'   => 'bmm_media_category',
+			'hide_empty' => false,
+			'fields'     => 'ids',
+		)
+	);
+
+	if ( ! is_wp_error( $terms ) && ! empty( $terms ) ) {
+		// Get all attachments.
+		$attachments = get_posts(
+			array(
+				'post_type'      => 'attachment',
+				'posts_per_page' => -1,
+				'fields'         => 'ids',
+			)
+		);
+
+		// Remove all terms from all attachments.
+		foreach ( $attachments as $attachment_id ) {
+			wp_set_object_terms( $attachment_id, array(), 'bmm_media_category' );
+			clean_object_term_cache( $attachment_id, 'attachment' );
+		}
+
+		// Delete all terms.
+		foreach ( $terms as $term_id ) {
+			wp_delete_term( $term_id, 'bmm_media_category' );
+		}
+
+		// Clear all caches.
+		delete_option( 'bmm_media_category_children' );
+		clean_taxonomy_cache( 'bmm_media_category' );
+	}
+
+	echo 'All categories and associations cleaned up!';
+}
+
+// Run once on any admin page load.
+add_action(
+	'admin_init',
+	function () {
+		if ( isset( $_GET['bmm_cleanup'] ) ) {
+			bmm_cleanup_all_categories();
+			wp_die( 'Cleanup complete! Remove this code from functions.php now.' );
+		}
+	}
+);

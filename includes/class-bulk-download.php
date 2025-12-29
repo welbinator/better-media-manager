@@ -62,6 +62,8 @@ class Bulk_Download {
 			return $redirect_to;
 		}
 
+		// Note: Nonce verification is handled by WordPress core before this filter is called.
+
 		// For Grid view, get IDs from $_POST['media'] instead.
 		if ( 'bulk_download' === $action && ! empty( $_POST['media'] ) ) {
 			$post_ids = array_map( 'intval', $_POST['media'] );
