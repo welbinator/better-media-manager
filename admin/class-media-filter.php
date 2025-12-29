@@ -209,14 +209,9 @@ class Media_Filter {
 	 * @return array Modified query variables.
 	 */
 	public function filter_ajax_query_attachments( $query ) {
-		error_log( 'BMM Filter: AJAX query called' );
-		error_log( 'BMM Filter: Incoming query = ' . print_r( $query, true ) );
-		error_log( 'BMM Filter: $_REQUEST[query] = ' . print_r( $_REQUEST['query'] ?? 'not set', true ) );
-
 		// Check if file type filter is applied in AJAX request.
 		if ( ! empty( $_REQUEST['query']['bmm_filetype'] ) ) {
 			$filetype = sanitize_text_field( wp_unslash( $_REQUEST['query']['bmm_filetype'] ) );
-			error_log( 'BMM Filter: Filetype filter = ' . $filetype );
 
 			// Add meta query to filter by file extension.
 			if ( ! isset( $query['meta_query'] ) ) {
@@ -233,12 +228,10 @@ class Media_Filter {
 		// Check if category filter is applied in AJAX request.
 		if ( ! empty( $_REQUEST['query']['bmm_media_category'] ) ) {
 			$category_id = absint( $_REQUEST['query']['bmm_media_category'] );
-			error_log( 'BMM Filter: Category filter = ' . $category_id );
 
 			// Remove the bmm_media_category from top-level query args (it shouldn't be there).
 			if ( isset( $query['bmm_media_category'] ) ) {
 				unset( $query['bmm_media_category'] );
-				error_log( 'BMM Filter: Removed bmm_media_category from top-level query' );
 			}
 
 			// Add tax query to filter by category.
@@ -252,8 +245,6 @@ class Media_Filter {
 				'field'    => 'term_id',
 				'terms'    => $category_id,
 			);
-			
-			error_log( 'BMM Filter: Final query = ' . print_r( $query, true ) );
 		}
 
 		return $query;
@@ -303,7 +294,7 @@ class Media_Filter {
 		if ( ! is_wp_error( $categories ) && ! empty( $categories ) ) {
 			$term_ids = wp_list_pluck( $categories, 'term_id' );
 			wp_update_term_count_now( $term_ids, 'bmm_media_category' );
-			
+
 			// Re-fetch to get updated counts.
 			$categories = get_terms(
 				array(

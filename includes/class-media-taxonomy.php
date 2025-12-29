@@ -70,17 +70,17 @@ class Media_Taxonomy {
 		);
 
 		$args = array(
-			'labels'               => $labels,
-			'public'               => true,
-			'hierarchical'         => true,
-			'show_ui'              => true,
-			'show_admin_column'    => true,
-			'show_in_nav_menus'    => true,
-			'show_tagcloud'        => false,
-			'show_in_rest'         => true,
-			'rewrite'              => array( 'slug' => self::TAXONOMY_SLUG ),
+			'labels'                => $labels,
+			'public'                => true,
+			'hierarchical'          => true,
+			'show_ui'               => true,
+			'show_admin_column'     => true,
+			'show_in_nav_menus'     => true,
+			'show_tagcloud'         => false,
+			'show_in_rest'          => true,
+			'rewrite'               => array( 'slug' => self::TAXONOMY_SLUG ),
 			'update_count_callback' => array( $this, 'update_attachment_term_count' ),
-			'capabilities'         => array(
+			'capabilities'          => array(
 				'manage_terms' => 'manage_categories',
 				'edit_terms'   => 'manage_categories',
 				'delete_terms' => 'manage_categories',
@@ -93,7 +93,7 @@ class Media_Taxonomy {
 
 	/**
 	 * Custom term count callback for attachments.
-	 * 
+	 *
 	 * Attachments have post_status of 'inherit', so we need custom counting.
 	 *
 	 * @param array  $terms    List of term IDs.
@@ -196,7 +196,7 @@ class Media_Taxonomy {
 	public function save_attachment_category( $post, $attachment ) {
 		// Get the post ID from the array.
 		$post_id = isset( $post['ID'] ) ? absint( $post['ID'] ) : 0;
-		
+
 		if ( ! $post_id ) {
 			return $post;
 		}
@@ -207,7 +207,7 @@ class Media_Taxonomy {
 			return $post;
 		}
 
-		$term_ids = array();
+		$term_ids  = array();
 		$raw_terms = (array) $attachment[ self::TAXONOMY_SLUG ];
 
 		foreach ( $raw_terms as $term_value ) {
@@ -480,15 +480,8 @@ class Media_Taxonomy {
 	 * @return void
 	 */
 	public function ajax_save_attachment_categories() {
-		// Debug: Log that function was called
-		if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
-			error_log( 'BMM: ajax_save_attachment_categories called' );
-			error_log( 'BMM: POST data: ' . wp_json_encode( $_POST ) );
-		}
-
 		// Verify nonce.
 		if ( ! isset( $_POST['nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['nonce'] ) ), 'bmm_save_categories' ) ) {
-			error_log( 'BMM: Nonce verification failed' );
 			wp_send_json_error( array( 'message' => __( 'Invalid nonce.', 'better-media-manager' ) ) );
 		}
 
@@ -521,20 +514,20 @@ class Media_Taxonomy {
 		if ( empty( $categories ) ) {
 			// Remove all terms.
 			$result = wp_set_object_terms( $attachment_id, array(), self::TAXONOMY_SLUG );
-			
+
 			if ( is_wp_error( $result ) ) {
 				wp_send_json_error( array( 'message' => $result->get_error_message() ) );
 			}
-			
+
 			// Clear caches.
 			clean_object_term_cache( $attachment_id, 'attachment' );
 			wp_cache_delete( $attachment_id, 'post_meta' );
-			
+
 			// Update counts for the old terms that were removed.
 			if ( ! empty( $old_terms ) ) {
 				wp_update_term_count_now( $old_terms, self::TAXONOMY_SLUG );
 			}
-			
+
 			wp_send_json_success(
 				array(
 					'message'      => __( 'Categories removed.', 'better-media-manager' ),
@@ -560,16 +553,16 @@ class Media_Taxonomy {
 					$existing_term = get_term_by( 'name', $term_name, self::TAXONOMY_SLUG );
 
 					if ( $existing_term ) {
-						$term_ids[]                 = $existing_term->term_id;
-						$term_mapping[ $term_value ] = (string) $existing_term->term_id;
+						$term_ids[]                            = $existing_term->term_id;
+						$term_mapping[ $term_value ]           = (string) $existing_term->term_id;
 						$term_names[ $existing_term->term_id ] = $existing_term->name;
 					} else {
 						// Create new term.
 						$new_term = wp_insert_term( $term_name, self::TAXONOMY_SLUG );
 						if ( ! is_wp_error( $new_term ) && isset( $new_term['term_id'] ) ) {
-							$term_ids[]                 = $new_term['term_id'];
+							$term_ids[]                  = $new_term['term_id'];
 							$term_mapping[ $term_value ] = (string) $new_term['term_id'];
-							
+
 							// Get the term object to get the name.
 							$created_term = get_term( $new_term['term_id'], self::TAXONOMY_SLUG );
 							if ( $created_term && ! is_wp_error( $created_term ) ) {
@@ -580,10 +573,10 @@ class Media_Taxonomy {
 				}
 			} else {
 				// Existing term ID.
-				$term_id                       = absint( $term_value );
-				$term_ids[]                    = $term_id;
-				$term_mapping[ $term_value ]    = (string) $term_id;
-				
+				$term_id                     = absint( $term_value );
+				$term_ids[]                  = $term_id;
+				$term_mapping[ $term_value ] = (string) $term_id;
+
 				// Get term name.
 				$term = get_term( $term_id, self::TAXONOMY_SLUG );
 				if ( $term && ! is_wp_error( $term ) ) {
@@ -603,23 +596,16 @@ class Media_Taxonomy {
 		clean_object_term_cache( $attachment_id, 'attachment' );
 		wp_cache_delete( $attachment_id, 'post_meta' );
 
-		// Verify the terms were actually saved
-		$saved_terms = wp_get_object_terms( $attachment_id, self::TAXONOMY_SLUG, array( 'fields' => 'ids' ) );
-		error_log( 'BMM Category: Attempted to save term IDs: ' . print_r( $term_ids, true ) );
-		error_log( 'BMM Category: Actually saved term IDs: ' . print_r( $saved_terms, true ) );
-
 		// Update term counts for both old and new terms.
 		$all_affected_terms = array_unique( array_merge( $old_terms, $term_ids ) );
 		if ( ! empty( $all_affected_terms ) ) {
 			wp_update_term_count_now( $all_affected_terms, self::TAXONOMY_SLUG );
-			error_log( 'BMM Category: Updated counts for terms: ' . print_r( $all_affected_terms, true ) );
 		}
 
 		wp_send_json_success(
 			array(
 				'message'      => __( 'Categories saved.', 'better-media-manager' ),
 				'term_ids'     => $term_ids,
-				'saved_terms'  => $saved_terms, // Send back what was actually saved for debugging
 				'term_mapping' => $term_mapping,
 				'term_names'   => $term_names,
 			)
