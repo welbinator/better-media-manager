@@ -126,6 +126,101 @@ class Media_Taxonomy {
 	}
 
 	/**
+	 * Make categories searchable in media library.
+	 *
+	 * @param WP_Query $query The WordPress query object.
+	 * @return void
+	 */
+	public function search_media_by_category( $query ) {
+		// Only modify search queries in admin for attachments.
+		if ( ! is_admin() || ! $query->is_search() || 'attachment' !== $query->get( 'post_type' ) ) {
+			return;
+		}
+
+		// Get the search term.
+		$search_term = $query->get( 's' );
+		if ( empty( $search_term ) ) {
+			return;
+		}
+
+		// Add filters to modify the SQL query.
+		add_filter( 'posts_join', array( $this, 'search_join' ), 10, 2 );
+		add_filter( 'posts_where', array( $this, 'search_where' ), 10, 2 );
+		add_filter( 'posts_groupby', array( $this, 'search_groupby' ), 10, 2 );
+	}
+
+	/**
+	 * Modify the JOIN clause to include taxonomy tables.
+	 *
+	 * @param string   $join  The JOIN clause.
+	 * @param WP_Query $query The query object.
+	 * @return string Modified JOIN clause.
+	 */
+	public function search_join( $join, $query ) {
+		global $wpdb;
+
+		// Only modify if this is a search query for attachments.
+		if ( ! $query->is_search() || 'attachment' !== $query->get( 'post_type' ) ) {
+			return $join;
+		}
+
+		// Join term relationships and taxonomy tables.
+		$join .= " LEFT JOIN {$wpdb->term_relationships} tr ON {$wpdb->posts}.ID = tr.object_id";
+		$join .= " LEFT JOIN {$wpdb->term_taxonomy} tt ON tr.term_taxonomy_id = tt.term_taxonomy_id AND tt.taxonomy = '" . self::TAXONOMY_SLUG . "'";
+		$join .= " LEFT JOIN {$wpdb->terms} t ON tt.term_id = t.term_id";
+
+		return $join;
+	}
+
+	/**
+	 * Modify the WHERE clause to include category names in search.
+	 *
+	 * @param string   $where The WHERE clause.
+	 * @param WP_Query $query The query object.
+	 * @return string Modified WHERE clause.
+	 */
+	public function search_where( $where, $query ) {
+		global $wpdb;
+
+		// Only modify if this is a search query for attachments.
+		if ( ! $query->is_search() || 'attachment' !== $query->get( 'post_type' ) ) {
+			return $where;
+		}
+
+		$search_term = $query->get( 's' );
+		if ( empty( $search_term ) ) {
+			return $where;
+		}
+
+		// Add category name to the search.
+		$search_term = $wpdb->esc_like( $search_term );
+		$where      .= $wpdb->prepare( " OR (t.name LIKE %s)", '%' . $search_term . '%' );
+
+		return $where;
+	}
+
+	/**
+	 * Add GROUP BY to prevent duplicate results.
+	 *
+	 * @param string   $groupby The GROUP BY clause.
+	 * @param WP_Query $query   The query object.
+	 * @return string Modified GROUP BY clause.
+	 */
+	public function search_groupby( $groupby, $query ) {
+		global $wpdb;
+
+		// Only modify if this is a search query for attachments.
+		if ( ! $query->is_search() || 'attachment' !== $query->get( 'post_type' ) ) {
+			return $groupby;
+		}
+
+		// Group by post ID to prevent duplicates.
+		$groupby = "{$wpdb->posts}.ID";
+
+		return $groupby;
+	}
+
+	/**
 	 * Add category field to attachment edit screen.
 	 *
 	 * @param array   $form_fields Array of form fields.
