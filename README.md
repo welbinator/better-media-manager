@@ -197,6 +197,11 @@ A: Yes! Categories use WordPress's standard taxonomy system, so they're searchab
 
 ## Changelog
 
+### 1.2.1 - 2025-12-28
+- Added category search functionality to media library
+- Categories are now searchable alongside attachment titles
+- Search results include attachments with matching category names
+
 ### 1.2.0 - 2025-12-28
 - Added custom category taxonomy for media files (bmm_media_category)
 - Multi-select category interface with Select2 integration
