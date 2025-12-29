@@ -125,6 +125,7 @@ class Core {
 		$this->loader->add_action( 'admin_enqueue_scripts', $media_taxonomy, 'enqueue_select2' );
 		$this->loader->add_action( 'wp_ajax_bmm_save_attachment_categories', $media_taxonomy, 'ajax_save_attachment_categories' );
 		$this->loader->add_action( 'wp_ajax_bmm_create_category', $media_taxonomy, 'ajax_create_category' );
+		$this->loader->add_action( 'pre_get_posts', $media_taxonomy, 'search_media_by_category' );
 
 		// Media Library Filtering.
 		$media_filter = new Admin\Media_Filter( $this->get_plugin_name(), $this->get_version() );
