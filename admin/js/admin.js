@@ -165,7 +165,7 @@
 			}
 
 			// Display summary.
-			$summary.html('<div class="notice notice-success"><p>Found ' + data.images.length + ' image(s). Review and configure import options below.</p></div>');
+			$summary.html('<div class="notice notice-success"><p>Found ' + escapeHtml(String(data.images.length)) + ' image(s). Review and configure import options below.</p></div>');
 
 			// Display image grid.
 			var html = '';
@@ -441,7 +441,7 @@
 			var $content = $results.find('.results-content');
 
 			var html = '<div class="notice notice-success"><p>';
-			html += 'Successfully imported ' + data.imported_count + ' of ' + data.total_count + ' images!';
+			html += 'Successfully imported ' + escapeHtml(String(data.imported_count)) + ' of ' + escapeHtml(String(data.total_count)) + ' images!';
 			html += '</p></div>';
 
 			if (data.errors && data.errors.length > 0) {
@@ -452,7 +452,7 @@
 				html += '</ul></div>';
 			}
 
-			html += '<p><a href="' + betterMediaManagerAdmin.media_library_url + '" class="button button-primary">View Media Library</a></p>';
+			html += '<p><a href="' + escapeHtml(betterMediaManagerAdmin.media_library_url) + '" class="button button-primary">View Media Library</a></p>';
 
 			$content.html(html);
 			$results.show();
